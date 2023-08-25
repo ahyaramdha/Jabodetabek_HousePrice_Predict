@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import streamlit as st
 
-# white background 
+# white background (?)
 st.markdown(
     """
     <style>
@@ -18,19 +19,20 @@ st.markdown(
 
 # Loaddata
 df = pd.read_csv('HargaRumahJabodetabek_clean.csv')
+df2 = df
 
 # Sidebar
 st.sidebar.title('Menu Page')
 page = st.sidebar.selectbox('Select Page', ['Home', 'Analisis Harga Rumah', 'Peta Interaktif', 'Prediksi Harga Rumah'])
 
-# Main Content
+# Home page
 if page == 'Home':
     st.title('Selamat Datang di Website Sederhana Saya!')
     st.header('Analisis Harga Rumah di Jabodetabek')
     st.subheader('Free Prediksi Harga Rumah!')
     st.text('By Ahya Ramdhanitasari')
     st.markdown('<small>Silakan buka menu disamping!</small>', unsafe_allow_html=True)
-    st.markdown('<small>Sumber: Kaggle dan rumah123.com</small>', unsafe_allow_html=True)
+    st.markdown('<small>Sumber: Kaggle dan rumah123.com (2022)</small>', unsafe_allow_html=True)
 
     # Sidebar navigation to other pages
     if st.sidebar.button('Analisis Harga Rumah'):
@@ -50,7 +52,7 @@ elif page == 'Analisis Harga Rumah':
     df2 = df
     st.dataframe(df2[['Kota', 'Wilayah', 'K. Tidur', 'K. Mandi', 'K. Tidur Pembantu', 'K. Mandi Pembantu', 'Lantai', 'Luas Tanah', 'Luas Bangunan', 'Carport', 'furnishing', 'TahunRumah', 'Harga']])
 
-    #hasil analisis
+    # hasil analisis
     st.subheader('Hasil Analisis')
     st.text('1. Kota Administratif Jakarta Pusat memiliki rata-rata harga rumah tertinggi di Jabodetabek.')
     st.text('2. Depok merupakan kota dengan rata-rata harga rumah terendah di Jabodetabek')
@@ -58,8 +60,8 @@ elif page == 'Analisis Harga Rumah':
     st.text('Sebagai Buktinya, dapat dilihat pada grafik dibawah ini.')
 
     st.subheader('Grafik')
-     # Display Distribution of Price
-    plt.figure(figsize=(10,5))
+    # Display Distribution of Price
+    plt.figure(figsize=(5,5))
     plt.hist(df['Harga'], bins=500, color='green')
     plt.title('Distribusi Harga Rumah di Jabodetabek', fontsize=21, color='red', pad=10)
     plt.xlabel('Harga (Juta)', fontsize=12, color='darkblue')
@@ -69,9 +71,9 @@ elif page == 'Analisis Harga Rumah':
     plt.xticks(labels, (labels/1000000).astype(int))
     st.pyplot(plt)
 
-    #Display lagi
+    # Display lagi
     plt.clf()
-    df.groupby('Kota')['Harga'].mean().sort_values(ascending=False).plot(kind='bar', color='blue', figsize=(8,5))
+    df.groupby('Kota')['Harga'].mean().sort_values(ascending=False).plot(kind='bar', color='blue', figsize=(5,5))
     plt.title('Rata-rata Harga Rumah per-Kota\ndi Jabodetabek', loc='center',pad=10, fontsize=20, color='red')
     plt.xlabel('Kota', fontsize = 11, color='darkblue')
     plt.ylabel('Harga (juta)', fontsize = 11, color='darkblue')
@@ -83,6 +85,10 @@ elif page == 'Analisis Harga Rumah':
 
 elif page == 'Peta Interaktif':
     st.title('Peta Interaktif Harga Rumah di Jabodetabek')
+
+    df2 = df[df['Harga'] <= 300000000000]
+    total = df2['Harga'].max()
+    #total2 = df2['Harga'].min()
 
     #handling outlier
     def outlier (x):
@@ -121,17 +127,50 @@ elif page == 'Peta Interaktif':
     df['Ukuran'] = 1
 
     # Create scatterplot map using Plotly Express
-    fig = px.scatter_mapbox(df, lat=df['lat'], lon=df['lon'], center={'lat': -6.21462, 'lon': 106.84513}, zoom=9, color='Harga', labels={'Harga': 'Harga'},size = df['Ukuran'], size_max = 10, color_continuous_scale=px.colors.sequential.Rainbow, width=720, height=500, hover_name="Kota", custom_data=['Kota', 'Harga'])
+    fig = px.scatter_mapbox(df, lat=df['lat'], lon=df['lon'], center={'lat': -6.21462, 'lon': 106.84513}, zoom=9, color='Harga', labels={'Harga': 'Harga'},size = df['Ukuran'], size_max = 10, color_continuous_scale=px.colors.sequential.Rainbow, width=720, height=500, hover_name="Kota", custom_data=['Kecamatan', 'Harga'])
     hovertemplate = '<b>%{customdata[0]}</b><br>Harga: %{customdata[1]:,.2f}'
     fig.update_traces(hovertemplate=hovertemplate)
 
     fig.update_layout(mapbox_style='open-street-map')
     fig.update_layout(margin={'r': 0, 't': 50, 'l': 0, 'b': 0})
+
+    # Show the map with color bar if the checkbox is selected
     st.plotly_chart(fig, use_container_width=True)
 
+    #metric_title = 'Total Data'
+    #total = df['title'].count()
+    #st.metric(metric_title, '{:,}'.format(total))
 
-    st.text('* Satuan Harga disini adalah miliar rupiah. Jadi jika harga 7B, adalah\nharga 7 Miliar Rupiah.')
+    #metric_title = 'Median Harga'
+    #total = df['Harga'].median()
+    #total_display = f'{total/1e9:.2f} M'
+    #st.metric(metric_title, total_display)
+
+    col1, col2, col3= st.columns(3)
+    with col1:
+        metric_title = 'Total Data'
+        totale = df['title'].count()
+        st.metric(metric_title, '{:,}'.format(totale))
+    with col2:
+        metric_title = 'Median Harga'
+        median = df2['Harga'].median()
+        total_display = f'{median/1e9:.2f} M'
+        st.metric(metric_title, total_display)
+    with col3:
+        metric_title = 'Max Harga'
+        #total = df2['Harga'].max()
+        total_display = f'{total/1e9:} M'
+        st.metric(metric_title, total_display)
+
+   
+    #st.plotly_chart(colorbar_trace, use_container_width=False)
+    #st.plotly_chart(fig, use_container_width=True)
+
+    st.text('Keterangan:')
+    st.text('* Satuan Harga pada bar warna (legenda) adalah miliar rupiah. Jadi\njika angka menunjukkan angka 7B, maka angka tersebut menunjukkan\nharga 7 Miliar Rupiah.')
     st.text('* Dilakukan penanganan pada outlier sebelum dilakukan plot karena nilai\noutlier yang terlalu tinggi, sehingga dapat mengganggu penggambaran\ndan interpretasi data.')
+    st.text('* Banyak data dengan harga yang sangat tinggi melebihi ratusan miliar.\nSetelah melihat ke sumber data (website), itu adalah mansion mewahh\natau apartemen.')
+
     
 
 elif page == 'Prediksi Harga Rumah':
