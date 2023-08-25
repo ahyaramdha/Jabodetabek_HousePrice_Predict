@@ -130,7 +130,7 @@ elif page == 'Dashboard Harga Rumah':
         fig = px.bar(df_grouped, x=df_grouped.index, y='Harga', title='Rata-rata Harga Rumah per-Kota\ndi Jabodetabek', color_discrete_sequence=['aqua'])
         fig.update_layout(
             xaxis_title='Kota',
-            yaxis_title='Harga (juta)',
+            yaxis_title='Harga',
             xaxis=dict(tickangle=30),
             yaxis=dict(
                 tickvals=[i*5e9 for i in range(1, 20)], 
