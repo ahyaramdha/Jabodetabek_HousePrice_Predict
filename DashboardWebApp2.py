@@ -32,6 +32,7 @@ if page == 'Home':
     st.subheader('Free Prediksi Harga Rumah!')
     st.text('By Ahya Ramdhanitasari')
     st.markdown('<small>Silakan buka menu disamping! (atau klik tanda [>] di kiri atas) </small>', unsafe_allow_html=True)
+    st.markdown('<small>Anda dapat meningkatkan pengalaman berkunjung dengan\nklik tanda titik tiga di kanan atas, klik settings, lalu centang wide mode </small>', unsafe_allow_html=True)
     st.markdown('<small>Sumber: Kaggle dan rumah123.com (2022)</small>', unsafe_allow_html=True)
 
     # Sidebar navigation to other pages
@@ -130,13 +131,31 @@ elif page == 'Dashboard Harga Rumah':
         fig = px.bar(df_grouped, x=df_grouped.index, y='Harga', title='Rata-rata Harga Rumah per-Kota\ndi Jabodetabek', color_discrete_sequence=['aqua'])
         fig.update_layout(
             xaxis_title='Kota',
-            yaxis_title='Harga',
+            yaxis_title='Harga (juta)',
             xaxis=dict(tickangle=30),
             yaxis=dict(
                 tickvals=[i*5e9 for i in range(1, 20)], 
                 ticktext=[f'{i*5} M' for i in range(1, 20)],
                 tickformat=',.0f'))
         st.plotly_chart(fig, use_container_width=True)
+
+    dfnum = df2[['Harga','K. Tidur', 'K. Mandi', 'Luas Tanah', 'Luas Bangunan', 'Carport', 'Lantai', 'Carport', 'TahunRumah']]
+    
+    # Calculate the correlation matrix
+    corr_matrix = dfnum.corr()
+    # Set the Plotly theme to the Streamlit theme
+    #pio.templates.default = "plotly_dark"  # Gunakan tema Streamlit
+    color_scale = [(0, '#FFFFFF'), (1, '#00D1D2')]
+
+    # Create a heatmap with Plotly Express
+    fig_heatmap = px.imshow( corr_matrix, color_continuous_scale = color_scale, labels=dict(x="Kolom", y="Kolom", color="Korelasi"), title='Heatmap Korelasi Kolom Numerik')
+
+    # Customize the layout
+    fig_heatmap.update_yaxes(side="right")
+    fig_heatmap.update_layout(xaxis_title="", yaxis_title="", coloraxis_showscale=True, coloraxis_colorbar=dict(title="Korelasi", xanchor="right", x=1.37), autosize=False, width=800, height=800, coloraxis_colorbar_thickness=15)
+
+    # Display the heatmap in Streamlit
+    st.plotly_chart(fig_heatmap, use_container_width=True)
 
     # Display the new table
     st.subheader('Gambaran Data')
@@ -149,15 +168,15 @@ elif page == 'Dashboard Harga Rumah':
     st.text('1. Kota Administratif Jakarta Pusat memiliki rata-rata harga rumah tertinggi di Jabodetabek.')
     st.text('2. Depok merupakan kota dengan rata-rata harga rumah terendah di Jabodetabek')
     st.text('3. Umumnya harga rumah di Jabodetabek dibawah 5 miliar.')
+    st.text('4. Luas bangunan, luas tanah, jumlah kamar mandi, dan jumlah kamar tidur paling mempengaruhi harga rumah.')
 
     st.text(' ')
     st.text(' ')
     st.text('Keterangan:')
     st.text('* Satuan Harga pada bar warna (legenda) adalah miliar rupiah. Jadi\njika ditampilkan angka 7B, maka angka tersebut menunjukkan\nharga 7 Miliar Rupiah.')
     st.text('* Dilakukan penanganan pada outlier sebelum dilakukan plot karena nilai\noutlier yang terlalu tinggi, sehingga dapat mengganggu penggambaran\ndan interpretasi data.')
-    st.text('* Data yang dipakai pada peta interaktif adalah data yang sudah diatur\nnilai ekstremnya (outlier), sedangkan data yang dipakai pada grafik\nmenggunakan data asli.')
     st.text('* Banyak data dengan harga yang sangat tinggi melebihi ratusan miliar.\nSetelah melihat ke sumber data (website), itu adalah mansion mewahh\natau apartemen.')
-    st.markdown('<small>+ Jika ada tulisan yang terpotong, geser ke kiri. (Pengguna HP)</small>', unsafe_allow_html=True)
+    st.markdown('<small>+ Jika ada tulisan yang terpotong, geser ke kanan. (Pengguna HP)</small>', unsafe_allow_html=True)
 
 elif page == 'Prediksi Harga Rumah':
     st.title('Prediksi Harga Rumah')
