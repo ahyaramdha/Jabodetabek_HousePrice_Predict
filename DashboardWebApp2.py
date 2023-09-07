@@ -141,21 +141,30 @@ elif page == 'Dashboard Harga Rumah':
 
     dfnum = df2[['Harga','K. Tidur', 'K. Mandi', 'Luas Tanah', 'Luas Bangunan', 'Carport', 'Lantai', 'Carport', 'TahunRumah']]
     
-    # Calculate the correlation matrix
-    corr_matrix = dfnum.corr()
-    # Set the Plotly theme to the Streamlit theme
-    #pio.templates.default = "plotly_dark"  # Gunakan tema Streamlit
-    color_scale = [(0, '#FFFFFF'), (1, '#00D1D2')]
+    # Create a custom color palette from white to aqua4
+    color_scale = ['#FFFFFF', '#00FFFF', '#17d4d4', '#00B3B3', '#009D9D', '#006262']  # Putih ke Aqua4
 
-    # Create a heatmap with Plotly Express
-    fig_heatmap = px.imshow( corr_matrix, color_continuous_scale = color_scale, labels=dict(x="Kolom", y="Kolom", color="Korelasi"), title='Heatmap Korelasi Kolom Numerik')
-
+    # Create a scatter plot with Plotly Express
+    fig_scatter = px.scatter( df2, x='Luas Tanah', y='Luas Bangunan', color='Harga', title='Luas Tanah vs. Luas Bangunan (dengan Harga)', labels={'Luas Tanah': 'Luas Tanah (m2)', 'Luas Bangunan': 'Luas Bangunan (m2)'}, color_continuous_scale=color_scale)
     # Customize the layout
-    fig_heatmap.update_yaxes(side="right")
-    fig_heatmap.update_layout(xaxis_title="", yaxis_title="", coloraxis_showscale=True, coloraxis_colorbar=dict(title="Korelasi", xanchor="right", x=1.37), autosize=False, width=800, height=800, coloraxis_colorbar_thickness=15)
+    fig_scatter.update_traces(marker=dict(size=5))
+    fig_scatter.update_layout(
+        showlegend=True,
+        legend=dict(title='Harga'))
 
-    # Display the heatmap in Streamlit
-    st.plotly_chart(fig_heatmap, use_container_width=True)
+    # Display the scatter plot in Streamlit
+    st.plotly_chart(fig_scatter, use_container_width=True)
+
+    # Create a scatter plot with Plotly Express
+    fig_scatter = px.scatter( df2, x='K. Tidur', y='K. Mandi', color='Harga', title='Jumlah Kamar Tidur vs. Kamar Mandi (dengan Harga)', labels={'K. Mandi': 'Jumlah Kamar Mandi', 'K. Tidur': 'Jumlah Kamar Tidur'}, color_continuous_scale=color_scale)
+    # Customize the layout
+    fig_scatter.update_traces(marker=dict(size=5))
+    fig_scatter.update_layout(
+        showlegend=True,
+        legend=dict(title='Harga'))
+
+    # Display the scatter plot in Streamlit
+    st.plotly_chart(fig_scatter, use_container_width=True)
 
     # Display the new table
     st.subheader('Gambaran Data')
@@ -165,10 +174,11 @@ elif page == 'Dashboard Harga Rumah':
 
     # hasil analisis
     st.subheader('Hasil Analisis')
-    st.text('1. Kota Administratif Jakarta Pusat memiliki rata-rata harga rumah tertinggi di Jabodetabek.')
-    st.text('2. Depok merupakan kota dengan rata-rata harga rumah terendah di Jabodetabek')
-    st.text('3. Umumnya harga rumah di Jabodetabek dibawah 5 miliar.')
-    st.text('4. Luas bangunan, luas tanah, jumlah kamar mandi, dan jumlah kamar tidur paling mempengaruhi harga rumah.')
+    st.write('1. Kota Administratif Jakarta Pusat memiliki rata-rata harga rumah tertinggi di Jabodetabek.')
+    st.write('2. Depok merupakan kota dengan rata-rata harga rumah terendah di Jabodetabek')
+    st.write('3. Umumnya harga rumah di Jabodetabek dibawah 5 miliar.')
+    st.write('4. Semakin luas bangunan atau tanahnya, maka semakin mahal harga rumahnya. Namun, luas bangunanlah yang paling menentukan harga rumah.')
+    st.write('5. Semakin banyak jumlah kamar tidur atau kamar mandi, maka semakin mahal harga rumahnya.')
 
     st.text(' ')
     st.text(' ')
