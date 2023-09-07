@@ -184,7 +184,7 @@ elif page == 'Dashboard Harga Rumah':
     st.text(' ')
     st.text('Keterangan:')
     st.text('* Satuan Harga pada bar warna (legenda) adalah miliar rupiah. Jadi\njika ditampilkan angka 7B, maka angka tersebut menunjukkan\nharga 7 Miliar Rupiah.')
-    st.text('* Dilakukan penanganan pada outlier sebelum dilakukan plot pada peta\ninteraktif karena nilaioutlier yang terlalu tinggi, sehingga dapat\nmengganggu penggambaran dan interpretasi data.')
+    st.text('* Dilakukan penanganan pada outlier sebelum dilakukan plot pada peta\ninteraktif karena nilai outlier yang terlalu tinggi, sehingga dapat\nmengganggu penggambaran dan interpretasi data.')
     st.text('* Banyak data dengan harga yang sangat tinggi melebihi ratusan miliar.\nSetelah melihat ke sumber data (website), itu adalah mansion mewahh\natau apartemen.')
     st.markdown('<small>+ Jika ada tulisan yang terpotong, geser ke kiri. (Pengguna HP)</small>', unsafe_allow_html=True)
 
